@@ -23,6 +23,4 @@ export default class TeamController {
 
     res.status(200).json(serviceResponse.data);
   }
-
-
 }
