@@ -22,4 +22,13 @@ export default class UserModel {
     const user = await this.model.findOne({ where: { email } });
     return !user ? null : user;
   }
+
+  async findRole(id: IUserResponse['id']): Promise<IUserResponse['role'] | null> {
+    console.log('IDDDDDDD', id);
+
+    const user = await this.model.findByPk(id);
+    if (!user) return null;
+    const { role } = user;
+    return role;
+  }
 }

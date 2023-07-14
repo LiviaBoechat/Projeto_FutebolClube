@@ -23,4 +23,17 @@ export default class UserController {
 
     res.status(200).json(serviceResponse.data);
   }
+
+  public async findRole(req: Request, res: Response) {
+    const { id } = res.locals.user;
+    console.log('CONTRO', id);
+
+    const serviceResponse = await this.userService.findRole(Number(id));
+
+    if (serviceResponse.status !== 'SUCCESSFUL') {
+      return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
+    }
+
+    res.status(200).json({ role: serviceResponse.data });
+  }
 }

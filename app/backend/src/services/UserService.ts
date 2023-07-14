@@ -19,4 +19,10 @@ export default class UserService {
     if (!user) return { status: 'NOT_FOUND', data: { message: `User ${id} not found` } };
     return { status: 'SUCCESSFUL', data: user };
   }
+
+  public async findRole(id: number): Promise<ServiceResponse<string>> {
+    const role = await this.userModel.findRole(id);
+    if (!role) return { status: 'NOT_FOUND', data: { message: `User ${id} not found` } };
+    return { status: 'SUCCESSFUL', data: role };
+  }
 }

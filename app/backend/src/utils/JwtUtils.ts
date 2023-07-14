@@ -2,9 +2,18 @@ import * as jwt from 'jsonwebtoken';
 import { Identifiable } from '../Interfaces/index';
 
 export default class JwtUtils {
-  private jwtSecret = process.env.JWT_SECRET || 'xablau';
+  static jwtSecret = process.env.JWT_SECRET || 'xablau';
 
-  sign(payload: Identifiable): string {
-    return jwt.sign(payload, this.jwtSecret);
+  static sign(payload: Identifiable): string {
+    return jwt.sign(payload, JwtUtils.jwtSecret);
+  }
+
+  static verify(token: string): Identifiable | undefined {
+    try {
+      const decoded = jwt.verify(token, JwtUtils.jwtSecret) as Identifiable;
+      return decoded;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

@@ -5,8 +5,6 @@ import UserModel from '../models/UserModel';
 import JwtUtils from '../utils/JwtUtils';
 
 export default class AuthController {
-  private jwtUtils = new JwtUtils();
-
   private model: UserModel = new UserModel();
 
   async login(req: Request, res: Response) {
@@ -25,7 +23,7 @@ export default class AuthController {
       });
     }
 
-    const token = this.jwtUtils.sign({ id: user.id });
+    const token = JwtUtils.sign({ id: user.id });
 
     return res.status(200).json({
       token,
