@@ -42,7 +42,7 @@ SequelizeMatch.init({
     allowNull: false,
   },
   inProgress: {
-    type: DataTypes.BOOLEAN,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 }, {

@@ -31,7 +31,7 @@ export default {
         field: 'away_team_goals'
       },
       inProgress: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
         field: 'in_progress',
       },

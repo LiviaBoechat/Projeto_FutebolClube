@@ -10,10 +10,9 @@ export default {
         autoIncrement: true,
         primaryKey: true,
       },
-      userName: {
+      username: {
         type: DataTypes.STRING,
         allowNull: false,
-        field: 'username'
       },
       role: {
         type: DataTypes.STRING,
