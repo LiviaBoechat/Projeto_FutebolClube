@@ -1,0 +1,32 @@
+import { Request, Response } from 'express';
+import MatchService from '../services/MatchService';
+import mapStatusHTTP from '../utils/mapStatusHTTP';
+
+export default class TeamController {
+  constructor(
+    private matchService = new MatchService(),
+  ) { }
+
+  public async filteredMatches(req: Request, res: Response) {
+    const filter = req.query.inProgress;
+
+    if (filter) {
+      const serviceResponse = await this.matchService.filteredMatches(Boolean(filter));
+      return res.status(200).json(serviceResponse.data);
+    }
+
+    const serviceResponse = await this.matchService.findAll();
+    res.status(200).json(serviceResponse.data);
+  }
+
+  public async finishMatch(req: Request, res: Response): Promise<Response> {
+    const id = Number(req.params.id);
+    const serviceResponse = await this.matchService.finishMatch(id);
+
+    if (serviceResponse.status !== 'SUCCESSFUL') {
+      return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
+    }
+
+    return res.status(200).json(serviceResponse.data);
+  }
+}
