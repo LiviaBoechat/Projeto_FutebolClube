@@ -7,7 +7,7 @@ const matchController = new MatchController();
 const router = Router();
 
 router.get('/', (req: Request, res: Response) => matchController
-  .filteredMatches(req, res));
+  .filterMatches(req, res));
 router.patch(
   '/:id/finish',
   authValidation,

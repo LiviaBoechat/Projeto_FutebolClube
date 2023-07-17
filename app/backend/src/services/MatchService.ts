@@ -14,8 +14,8 @@ export default class TeamService {
     return { status: 'SUCCESSFUL', data: allMatches };
   }
 
-  public async filteredMatches(filter: boolean): Promise<ServiceResponse<IMatches[]>> {
-    const matches = await this.matchModel.filteredMatches(filter);
+  public async filterMatches(filter: boolean): Promise<ServiceResponse<IMatches[]>> {
+    const matches = await this.matchModel.filterMatches(filter);
     if (!matches) return { status: 'INVALID_DATA', data: { message: 'Match not found' } };
     return { status: 'SUCCESSFUL', data: matches };
   }

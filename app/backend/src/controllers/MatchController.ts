@@ -7,11 +7,11 @@ export default class TeamController {
     private matchService = new MatchService(),
   ) { }
 
-  public async filteredMatches(req: Request, res: Response) {
+  public async filterMatches(req: Request, res: Response) {
     const filter = req.query.inProgress;
 
     if (filter) {
-      const serviceResponse = await this.matchService.filteredMatches(Boolean(filter));
+      const serviceResponse = await this.matchService.filterMatches(filter === 'true');
       return res.status(200).json(serviceResponse.data);
     }
 

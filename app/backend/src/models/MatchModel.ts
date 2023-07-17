@@ -17,7 +17,7 @@ export default class MatchModel implements IMatchModel {
     return dbData;
   }
 
-  async filteredMatches(filter: boolean): Promise<IMatches[]> {
+  async filterMatches(filter: boolean): Promise<IMatches[]> {
     const dbData = await this.model.findAll({
       where: { inProgress: filter },
       include: [
@@ -49,4 +49,3 @@ export default class MatchModel implements IMatchModel {
     return 'Match has been updated';
   }
 }
-//
