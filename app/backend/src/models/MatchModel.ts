@@ -2,7 +2,7 @@ import SequelizeMatch from '../database/models/SequelizeMatch';
 import SequelizeTeam from '../database/models/SequelizeTeam';
 import IMatches from '../Interfaces/matches/IMatches';
 import { IMatchModel } from '../Interfaces/matches/IMatchModel';
-// import { NewEntity } from '../Interfaces/index';
+import { NewEntity } from '../Interfaces/index';
 
 export default class MatchModel implements IMatchModel {
   private model = SequelizeMatch;
@@ -47,5 +47,25 @@ export default class MatchModel implements IMatchModel {
     if (affectedRows === 0) return 'Match has not been updated';
 
     return 'Match has been updated';
+  }
+
+  async update(id: IMatches['id'], homeTeamGoals: number, awayTeamGoals: number)
+    : Promise<IMatches | string> {
+    const [affectedRows] = await this.model.update(
+      {
+        homeTeamGoals, awayTeamGoals },
+      { where: { id } },
+    );
+    if (affectedRows === 0) return 'Match has not been updated';
+
+    return 'Match has been updated';
+  }
+
+  async create(data: NewEntity<IMatches>): Promise<IMatches> {
+    const dbData = await this.model.create(data);
+
+    const { id, homeTeamId, homeTeamGoals,
+      awayTeamId, awayTeamGoals, inProgress }: IMatches = dbData;
+    return { id, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals, inProgress };
   }
 }

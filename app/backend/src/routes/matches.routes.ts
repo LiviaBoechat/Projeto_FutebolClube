@@ -13,7 +13,11 @@ router.patch(
   authValidation,
   (req: Request, res: Response) => matchController.finishMatch(req, res),
 );
-// router.patch('/:id', authValidation, (req: Request, res: Response) => matchController.update(req, res));
-// router.create('/', authValidation, (req: Request, res: Response) => matchController.create(req, res));
+router.patch(
+  '/:id',
+  authValidation,
+  (req: Request, res: Response) => matchController.update(req, res),
+);
+router.post('/', authValidation, (req: Request, res: Response) => matchController.create(req, res));
 
 export default router;
