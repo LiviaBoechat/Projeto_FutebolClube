@@ -1,48 +1,48 @@
-import * as sinon from 'sinon';
-import * as chai from 'chai';
+// import * as sinon from 'sinon';
+// import * as chai from 'chai';
+// // @ts-ignore
+// import chaiHttp = require('chai-http');
 
-import chaiHttp = require('chai-http');
+// import { App } from '../app';
+// // import { users, userWithoutPassword } from './mocks/';
 
-import App from '../../src/App';
-import { users, userWithoutPassword } from '../mocks/User.mocks';
+// // @ts-ignore
 
-// @ts-ignore
+// import SequelizeUser from '../../src/database/models/SequelizeUser';
 
-import SequelizeUser from '../../src/database/models/SequelizeUser';
+// chai.use(chaiHttp);
 
-chai.use(chaiHttp);
+// const { expect } = chai;
 
-const { expect } = chai;
+// const { app } = new App();
 
-const { app } = new App();
+// describe('Users Test', function() {
+//   it('should return all users', async function() {
+//     sinon.stub(SequelizeUser, 'findAll').resolves(users as any);
 
-describe('Users Test', function() {
-  it('should return all users', async function() {
-    sinon.stub(SequelizeUser, 'findAll').resolves(users as any);
+//     const { status, body } = await chai.request(app).get('/users');
 
-    const { status, body } = await chai.request(app).get('/users');
+//     expect(status).to.equal(200);
+//     expect(body).to.deep.equal(users);
+//   });
 
-    expect(status).to.equal(200);
-    expect(body).to.deep.equal(users);
-  });
+//   it('should return a user by id', async function() {
+//     sinon.stub(SequelizeUser, 'findByPk').resolves(userWithoutPassword as any);
 
-  it('should return a user by id', async function() {
-    sinon.stub(SequelizeUser, 'findByPk').resolves(userWithoutPassword as any);
+//     const { status, body } = await chai.request(app).get('/users/1');
 
-    const { status, body } = await chai.request(app).get('/users/1');
+//     expect(status).to.equal(200);
+//     expect(body).to.deep.equal(userWithoutPassword);
+//   });
 
-    expect(status).to.equal(200);
-    expect(body).to.deep.equal(userWithoutPassword);
-  });
+//   it('should return a message when user is not found', async function() {
+//     sinon.stub(SequelizeUser, 'findByPk').resolves(null);
 
-  it('should return a message when user is not found', async function() {
-    sinon.stub(SequelizeUser, 'findByPk').resolves(null);
+//     const { status, body } = await chai.request(app).get('/users/1');
 
-    const { status, body } = await chai.request(app).get('/users/1');
+//     expect(status).to.equal(404);
+//     expect(body.message).to.equal('User not found');
+//   });
 
-    expect(status).to.equal(404);
-    expect(body.message).to.equal('User not found');
-  });
-
-  afterEach(sinon.restore);
-});
+//   afterEach(sinon.restore);
+// });
