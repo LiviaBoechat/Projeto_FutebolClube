@@ -67,19 +67,20 @@ describe('Matches test', () => {
   
       // Assert
       expect(status).to.equal(404);
-      expect(body.message).to.equal({ "message": "There is no team with such id!" });
+      expect(body.message).to.equal(`Match ${matchId} not found`);
     });
   
     // it('should return an error if the home team and away team are equal', async () => {
     //   // Arrange
-    //   sinon.stub(SequelizeMatch, 'update').resolves(matchServiceStub);
+    //   const matchId = 1;
+    //   sinon.stub(SequelizeMatch, 'update').resolves(updateEqualMatchMock as any);
   
     //   // Act
-    //   const { status, body } = await chai.request(app).post('/matches').send(updateEqualMatchMock);
+    //   const { status, body } = await chai.request(app).patch(`/matches/${matchId}`).send(updateMatchMock).set({ Authorization: tokenMock });
   
     //   // Assert
     //   expect(status).to.equal(422);
-    //   expect(body.message).to.equal(errorMessage);
+    //   expect(body.message).to.equal('It is not possible to create a match with two equal teams');
     // });
 
     it('should create a new match', async () => {

@@ -4,7 +4,7 @@
 // import chaiHttp = require('chai-http');
 
 // import { App } from '../app';
-// // import { users, userWithoutPassword } from './mocks/';
+// import { users, userWithoutPassword } from '../tests/mocks/User.mocks';
 
 // // @ts-ignore
 
