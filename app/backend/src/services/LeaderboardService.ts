@@ -1,45 +1,39 @@
 import MatchModel from '../models/MatchModel';
 import { IMatchModel } from '../Interfaces/matches/IMatchModel';
-
-interface TeamStats {
-  name: string;
-  totalPoints: number;
-  totalGames: number;
-  totalVictories: number;
-  totalDraws: number;
-  totalLosses: number;
-  goalsFavor: number;
-  goalsOwn: number;
-}
+import ILeaderboard from '../Interfaces/LeaderBoard/ILeaderboard';
+// import IMatches from '../Interfaces/matches/IMatches';
 
 export default class LeaderboardService {
-  private leaderboard: TeamStats[] = [];
+  private leaderboard: ILeaderboard[] = [];
 
   constructor(private matchModel: IMatchModel = new MatchModel()) {}
 
-  public static teamObjectConstructor(teamStats: [], homeTeamName: string, teamStatsArray: any) {
-    if (!teamStats) {
-      const teamObject = {
-        name: homeTeamName,
-        totalPoints: 0,
-        totalGames: 0,
-        totalVictories: 0,
-        totalDraws: 0,
-        totalLosses: 0,
-        goalsFavor: 0,
-        goalsOwn: 0,
-      };
-      teamStatsArray.push(teamObject);
-      return teamObject;
-    }
+  private static teamObjectConstructor(homeTeamName: string): ILeaderboard {
+    return {
+      name: homeTeamName,
+      totalPoints: 0,
+      totalGames: 0,
+      totalVictories: 0,
+      totalDraws: 0,
+      totalLosses: 0,
+      goalsFavor: 0,
+      goalsOwn: 0,
+      goalsBalance: 0,
+      efficiency: 0,
+    };
   }
 
-  public static teamStaticsConstruction(match: any, teamStatsArray: any) {
-    const homeTeamName = match.homeTeam?.teamName || '';
+  private static balanceAndEfficienceCalculation(teamStats: ILeaderboard): void {
+    teamStats.goalsBalance = teamStats.goalsFavor - teamStats.goalsOwn;
+    teamStats.efficiency = (teamStats.totalPoints / (teamStats.totalGames * 3)) * 100;
+  }
 
-    let teamStats = teamStatsArray.find((eachStat: any) => eachStat.name === homeTeamName);
+  private static teamStatsConstruction(match: any, leaderboard: ILeaderboard[]): void {
+    let teamStats = leaderboard.find((eachStat) => eachStat.name === match.homeTeam?.teamName);
+
     if (!teamStats) {
-      teamStats = LeaderboardService.teamObjectConstructor(teamStats, homeTeamName, teamStatsArray);
+      teamStats = LeaderboardService.teamObjectConstructor(match.homeTeam?.teamName);
+      leaderboard.push(teamStats);
     }
 
     teamStats.totalGames += 1;
@@ -55,19 +49,21 @@ export default class LeaderboardService {
     } else {
       teamStats.totalLosses += 1;
     }
+
+    LeaderboardService.balanceAndEfficienceCalculation(teamStats);
   }
 
-  public async findAll(): Promise<TeamStats[]> {
+  public async findAll(): Promise<ILeaderboard[]> {
     const allMatches = await this.matchModel.findAll();
-    const teamStatsArray: TeamStats[] = [];
+    // const teamStatsArray: ILeaderboard[] = [];
 
-    allMatches.forEach((match) => {
-      if (!match.inProgress) {
-        LeaderboardService.teamStaticsConstruction(match, teamStatsArray);
+    allMatches.forEach((eachMatch) => {
+      if (!eachMatch.inProgress) {
+        LeaderboardService.teamStatsConstruction(eachMatch, this.leaderboard);
       }
     });
 
-    this.leaderboard = teamStatsArray;
+    // this.leaderboard = teamStatsArray;
     return this.leaderboard;
   }
 }
