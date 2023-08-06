@@ -5,6 +5,6 @@ const leaderboardController = new LeaderboardController();
 
 const router = Router();
 
-router.get('/home', (req: Request, res: Response) => leaderboardController.findAll(req, res));
-
+router.get('/home', (req: Request, res: Response) => leaderboardController.findAllHome(req, res));
+router.get('/away', (req: Request, res: Response) => leaderboardController.findAllAway(req, res));
 export default router;

@@ -6,7 +6,7 @@ import IMatches from '../Interfaces/matches/IMatches';
 export default class LeaderboardService {
   constructor(private matchModel: IMatchModel = new MatchModel()) {}
 
-  private static teamObjectConstructor(homeTeamName: string | undefined): ILeaderboard {
+  private static homeTeamObjectConstructor(homeTeamName: string | undefined): ILeaderboard {
     return {
       name: homeTeamName || '',
       totalPoints: 0,
@@ -21,11 +21,29 @@ export default class LeaderboardService {
     };
   }
 
-  private static teamStatsConstruction(match: IMatches, teamStatsArray: ILeaderboard[]): void {
+  private static awayTeamObjectConstructor(awayTeamName: string | undefined): ILeaderboard {
+    return {
+      name: awayTeamName || '',
+      totalPoints: 0,
+      totalGames: 0,
+      totalVictories: 0,
+      totalDraws: 0,
+      totalLosses: 0,
+      goalsFavor: 0,
+      goalsOwn: 0,
+      goalsBalance: 0,
+      efficiency: 0,
+    };
+  }
+
+  private static homeTeamStatsConstruction(match: IMatches, teamStatsArray: ILeaderboard[]): void {
+    // buncando pelo nome do time no array
     let teamStats = teamStatsArray.find((eachStat) => eachStat.name === match.homeTeam?.teamName);
 
     if (!teamStats) {
-      teamStats = LeaderboardService.teamObjectConstructor(match.homeTeam?.teamName);
+      // construindo o objeto do time com o nome passado no parâmetro
+      teamStats = LeaderboardService.homeTeamObjectConstructor(match.homeTeam?.teamName);
+      // inserindo o objeto no array de times da casa
       teamStatsArray.push(teamStats);
     }
 
@@ -42,6 +60,41 @@ export default class LeaderboardService {
     } else {
       teamStats.totalLosses += 1;
     }
+  }
+
+  private static awayTeamStatsConstruction(match: IMatches, teamStatsArray: ILeaderboard[]): void {
+    // buncando pelo nome do time no array
+    let teamStats = teamStatsArray.find((eachStat) => eachStat.name === match.awayTeam?.teamName);
+
+    if (!teamStats) {
+      // construindo o objeto do time com o nome passado no parâmetro
+      teamStats = LeaderboardService.awayTeamObjectConstructor(match.awayTeam?.teamName);
+      // inserindo o objeto no array de times da casa
+      teamStatsArray.push(teamStats);
+    }
+
+    teamStats.totalGames += 1;
+    teamStats.goalsFavor += match.awayTeamGoals;
+    teamStats.goalsOwn += match.homeTeamGoals;
+
+    if (match.awayTeamGoals > match.homeTeamGoals) {
+      teamStats.totalPoints += 3;
+      teamStats.totalVictories += 1;
+    } else if (match.awayTeamGoals === match.homeTeamGoals) {
+      teamStats.totalPoints += 1;
+      teamStats.totalDraws += 1;
+    } else {
+      teamStats.totalLosses += 1;
+    }
+  }
+
+  private static updatedTeamStatsArray(teamStatsArray: any[]): ILeaderboard[] | any {
+    return teamStatsArray.map((eachMatch) => {
+      const goalsBalance = eachMatch.goalsFavor - eachMatch.goalsOwn;
+      const efficiency = (eachMatch.totalPoints / (eachMatch.totalGames * 3)) * 100;
+
+      return { ...eachMatch, goalsBalance, efficiency };
+    });
   }
 
   private static sortLeaderboard(updatedTeamStatsArray: any[]): ILeaderboard[] {
@@ -62,22 +115,40 @@ export default class LeaderboardService {
     });
   }
 
-  public async findAll(): Promise<ILeaderboard[]> {
+  public async findAllHome(): Promise<ILeaderboard[]> {
     const allMatches = await this.matchModel.findAll();
     const teamStatsArray: ILeaderboard[] = [];
 
     allMatches.forEach((eachMatch) => {
       if (eachMatch.inProgress === false) {
-        LeaderboardService.teamStatsConstruction(eachMatch as IMatches, teamStatsArray);
+        LeaderboardService.homeTeamStatsConstruction(eachMatch as IMatches, teamStatsArray);
       }
     });
 
-    const updatedTeamStatsArray: ILeaderboard[] = teamStatsArray.map((eachMatch) => {
-      const goalsBalance = eachMatch.goalsFavor - eachMatch.goalsOwn;
-      const efficiency = (eachMatch.totalPoints / (eachMatch.totalGames * 3)) * 100;
+    const updatedTeamStatsArray = LeaderboardService.updatedTeamStatsArray(teamStatsArray);
+    // const updatedTeamStatsArray: ILeaderboard[] = teamStatsArray.map((eachMatch) => {
+    //   const goalsBalance = eachMatch.goalsFavor - eachMatch.goalsOwn;
+    //   const efficiency = (eachMatch.totalPoints / (eachMatch.totalGames * 3)) * 100;
 
-      return { ...eachMatch, goalsBalance, efficiency };
+    //   return { ...eachMatch, goalsBalance, efficiency };
+    // });
+
+    const sortedLeaderboard = LeaderboardService.sortLeaderboard(updatedTeamStatsArray);
+
+    return sortedLeaderboard;
+  }
+
+  public async findAllAway(): Promise<ILeaderboard[]> {
+    const allMatches = await this.matchModel.findAll();
+    const teamStatsArray: ILeaderboard[] = [];
+
+    allMatches.forEach((eachMatch) => {
+      if (eachMatch.inProgress === false) {
+        LeaderboardService.awayTeamStatsConstruction(eachMatch as IMatches, teamStatsArray);
+      }
     });
+
+    const updatedTeamStatsArray = LeaderboardService.updatedTeamStatsArray(teamStatsArray);
 
     const sortedLeaderboard = LeaderboardService.sortLeaderboard(updatedTeamStatsArray);
 
