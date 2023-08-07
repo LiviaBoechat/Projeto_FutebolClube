@@ -69,7 +69,7 @@ export default class LeaderboardService {
     if (!teamStats) {
       // construindo o objeto do time com o nome passado no parâmetro
       teamStats = LeaderboardService.awayTeamObjectConstructor(match.awayTeam?.teamName);
-      // inserindo o objeto no array de times da casa
+      // inserindo o objeto no array de times de fora
       teamStatsArray.push(teamStats);
     }
 
@@ -126,12 +126,6 @@ export default class LeaderboardService {
     });
 
     const updatedTeamStatsArray = LeaderboardService.updatedTeamStatsArray(teamStatsArray);
-    // const updatedTeamStatsArray: ILeaderboard[] = teamStatsArray.map((eachMatch) => {
-    //   const goalsBalance = eachMatch.goalsFavor - eachMatch.goalsOwn;
-    //   const efficiency = (eachMatch.totalPoints / (eachMatch.totalGames * 3)) * 100;
-
-    //   return { ...eachMatch, goalsBalance, efficiency };
-    // });
 
     const sortedLeaderboard = LeaderboardService.sortLeaderboard(updatedTeamStatsArray);
 
@@ -151,6 +145,43 @@ export default class LeaderboardService {
     const updatedTeamStatsArray = LeaderboardService.updatedTeamStatsArray(teamStatsArray);
 
     const sortedLeaderboard = LeaderboardService.sortLeaderboard(updatedTeamStatsArray);
+
+    return sortedLeaderboard;
+  }
+
+  private static accumulateTeamStats(teams: ILeaderboard[]): { [key: string]: ILeaderboard } {
+    const uniqueTeams: { [key: string]: ILeaderboard } = {};
+
+    teams.forEach((team) => {
+      if (!uniqueTeams[team.name]) {
+        uniqueTeams[team.name] = { ...team };
+      } else {
+        uniqueTeams[team.name].totalPoints += team.totalPoints;
+        uniqueTeams[team.name].totalGames += team.totalGames;
+        uniqueTeams[team.name].totalVictories += team.totalVictories;
+        uniqueTeams[team.name].totalDraws += team.totalDraws;
+        uniqueTeams[team.name].totalLosses += team.totalLosses;
+        uniqueTeams[team.name].goalsFavor += team.goalsFavor;
+        uniqueTeams[team.name].goalsOwn += team.goalsOwn;
+        uniqueTeams[team.name].goalsBalance += team.goalsBalance;
+        uniqueTeams[team.name].efficiency = (uniqueTeams[team.name].totalPoints
+          / (uniqueTeams[team.name].totalGames * 3)) * 100;
+      }
+    });
+
+    return uniqueTeams;
+  }
+
+  public async findAll(): Promise<ILeaderboard[]> {
+    const homeLeaderboard = await this.findAllHome();
+    const awayLeaderboard = await this.findAllAway();
+    const concatArrays = homeLeaderboard.concat(awayLeaderboard);
+
+    const uniqueTeams = LeaderboardService.accumulateTeamStats(concatArrays);
+
+    const teamStatsArray: ILeaderboard[] = Object.values(uniqueTeams);
+
+    const sortedLeaderboard = LeaderboardService.sortLeaderboard(teamStatsArray);
 
     return sortedLeaderboard;
   }
