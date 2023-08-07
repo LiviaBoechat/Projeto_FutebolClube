@@ -87,7 +87,33 @@ const updateEqualMatchMock = {
 "homeTeamGoals": 3,
 "awayTeamGoals": 3
 }
-  
+
+const allLeaderboardMock = [
+  {
+    "name": "Corinthians",
+    "totalPoints": 15,
+    "totalGames": 6,
+    "totalVictories": 5,
+    "totalDraws": 0,
+    "totalLosses": 1,
+    "goalsFavor": 14,
+    "goalsOwn": 4,
+    "goalsBalance": 10,
+    "efficiency": 83.33333333333334
+  },
+  {
+    "name": "Palmeiras",
+    "totalPoints": 13,
+    "totalGames": 5,
+    "totalVictories": 4,
+    "totalDraws": 1,
+    "totalLosses": 0,
+    "goalsFavor": 17,
+    "goalsOwn": 5,
+    "goalsBalance": 12,
+    "efficiency": 86.66666666666667
+  },
+]
   export {
     tokenMock,
     matchMock,
@@ -96,4 +122,5 @@ const updateEqualMatchMock = {
     trueMatchesMock,
     updateMatchMock,
     updateEqualMatchMock,
+    allLeaderboardMock,
   };
