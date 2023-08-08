@@ -14,6 +14,7 @@ export default class MatchModel implements IMatchModel {
         { model: SequelizeTeam, as: 'awayTeam', attributes: { exclude: ['id'] } },
       ],
     });
+
     return dbData;
   }
 
