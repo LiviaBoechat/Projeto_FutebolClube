@@ -149,11 +149,12 @@ export default class LeaderboardService {
     return sortedLeaderboard;
   }
 
-  private static accumulateTeamStats(teams: ILeaderboard[]): { [key: string]: ILeaderboard } {
+  private static accumulateTeamStats(concatTeams: ILeaderboard[]): { [key: string]: ILeaderboard } {
     const uniqueTeams: { [key: string]: ILeaderboard } = {};
 
-    teams.forEach((team) => {
+    concatTeams.forEach((team) => {
       if (!uniqueTeams[team.name]) {
+        // crio obj. com o time que estou iterando no array concat
         uniqueTeams[team.name] = { ...team };
       } else {
         uniqueTeams[team.name].totalPoints += team.totalPoints;
@@ -186,3 +187,5 @@ export default class LeaderboardService {
     return sortedLeaderboard;
   }
 }
+
+// pega todas matches do model => crio array de matches, itero o total de matches e verifico se existe o time lá dentro => se não existir, crio objeto p/ ele e dou push p/ o dentro do array, se existir, faço atualização das stats => concateno todos os dois arrays (home e away) => crio novos objetos únicos para cada time => qd o objeto já foi createBrotliDecompress, somo os stats na iteração
